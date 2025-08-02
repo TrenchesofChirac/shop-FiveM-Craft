@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>FiveM Craft</title>
+<style>
+  /* Reset & base */
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    margin: 0;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    background: #121212;
+    color: #eee;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+  /* HEADER + LANGUE */
+  header {
+    background: linear-gradient(90deg, #00b894 0%, #019875 100%);
+    padding: 25px 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.7);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  header h1 {
+    font-weight: 900;
+    font-size: 2.5rem;
+    letter-spacing: 3px;
+    user-select: none;
+  }
+  .lang-select {
+    position: relative;
+    cursor: pointer;
+    user-select: none;
+  }
+  .lang-selected {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #121212cc;
+    border-radius: 20px;
+    padding: 6px 12px;
+    font-weight: 600;
+    transition: background 0.3s ease;
+  }
+  .lang-selected:hover {
+    background: #1e1e1ecc;
+  }
+  .lang-list {
+    position: absolute;
+    top: 38px;
+    right: 0;
+    background: #222;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.9);
+    display: none;
+    z-index: 50;
+  }
+  .lang-list.show {
+    display: block;
+  }
+  .lang-list div {
+    padding: 8px 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: background 0.25s ease;
+  }
+  .lang-list div:hover {
+    background: #00b894;
+    color: #121212;
+  }
+  .flag {
+    width: 20px;
+    height: 14px;
+    object-fit: cover;
+    border-radius: 2px;
+  }
+
+  /* ACCUEIL */
+  #accueil {
+    flex: 1;
+    background: url('https://chatgpt.com/95a6c4a0-d82a-49dd-9e2b-5f85daa679ee"><img src="https://i.ibb.co/rRWgwBTZ/Capture-d-cran-2025-08-02-221104.png" alt="Capture-d-cran-2025-08-02-221104') center center/cover no-repeat; /* Met ton logo en arrière-plan ici */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px 20px;
+    position: relative;
+  }
+  #accueil::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(18,18,18,0.75);
+    z-index: 0;
+  }
+  #accueil > * {
+    position: relative;
+    z-index: 1;
+  }
+  #accueil h1 {
+    font-size: 4rem;
+    color: #00b894;
+    margin-bottom: 0.3em;
+    text-shadow: 0 0 15px #00b894aa;
+  }
+  #accueil p {
+    font-size: 1.6rem;
+    margin-bottom: 2em;
+    color: #a0d9bd;
+    text-shadow: 0 0 8px #00b894aa;
+  }
+  #accueil button {
+    background: #00b894;
+    border: none;
+    color: #121212;
+    padding: 18px 48px;
+    font-size: 1.3rem;
+    border-radius: 40px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    box-shadow: 0 4px 15px #00b894bb;
+  }
+  #accueil button:hover {
+    background: #019875;
+    box-shadow: 0 6px 20px #019875cc;
+  }
+
+  /* BOUTIQUE */
+  #boutique {
+    display: none;
+    flex-direction: column;
+    min-height: 100vh;
+    background: #1a1a1a;
+  }
+  nav {
+    background: #121212;
+    padding: 20px 0;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    box-shadow: inset 0 -2px 5px #000000aa;
+    z-index: 10;
+  }
+  nav button {
+    background: #222;
+    border: none;
+    color: #eee;
+    padding: 14px 28px;
+    font-size: 1.1rem;
+    border-radius: 30px;
+    cursor: pointer;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    transition: background 0.3s ease, color 0.3s ease;
+    user-select: none;
+  }
+  nav button.active,
+  nav button:hover {
+    background: #00b894;
+    color: #121212;
+    box-shadow: 0 0 12px #00b894cc;
+  }
+  nav #backAccueilBtn {
+    margin-left: 30px;
+    background: #444;
+  }
+  nav #backAccueilBtn:hover {
+    background: #2e8b57;
+  }
+
+  main {
+    max-width: 1200px;
+    margin: 40px auto 60px;
+    padding: 0 20px;
+    flex: 1;
+  }
+
+  .catalog {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(280px,1fr));
+    gap: 26px;
+  }
+  .item {
+    background: #222;
+    border-radius: 12px;
+    padding: 18px 18px 28px;
+    box-shadow: 0 0 18px #00b894aa;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    user-select: none;
+  }
+  .item:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 8px 22px #00b894dd;
+  }
+  .item img {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-bottom: 15px;
+  }
+  .item h2 {
+    margin: 0 0 12px 0;
+    color: #55efc4;
+    font-weight: 700;
+    font-size: 1.3rem;
+    text-align: center;
+  }
+  .item p {
+    flex-grow: 1;
+    font-size: 1rem;
+    text-align: center;
+    color: #c0e6d5;
+    margin-bottom: 16px;
+  }
+  .item .price-tag {
+    font-weight: 800;
+    font-size: 1.1rem;
+    color: #00d484;
+    margin-bottom: 8px;
+  }
+  .btn {
+    background: #00b894;
+    border: none;
+    color: #121212;
+    padding: 12px 28px;
+    border-radius: 30px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    text-align: center;
+  }
+  .btn:hover {
+    background: #019875;
+  }
+
+  footer {
+    background: #121212;
+    text-align: center;
+    color: #555;
+    padding: 20px;
+    font-size: 0.95rem;
+    box-shadow: inset 0 1px 3px #000000bb;
+  }
+
+  /* MODALE DETAIL PRODUIT */
+  #productModal {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.8);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+    padding: 20px;
+  }
+  #productModal.show {
+    display: flex;
+  }
+  #productModal .modal-content {
+    background: #222;
+    border-radius: 14px;
+    max-width: 900px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 0 22px #00b894cc;
+    display: flex;
+    flex-direction: column;
+  }
+  #productModal header {
+    padding: 20px 30px;
+    border-bottom: 1px solid #00b894;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  #productModal header h2 {
+    margin: 0;
+    color: #00d484;
+    font-weight: 900;
+    font-size: 1.9rem;
+    letter-spacing: 1px;
+  }
+  #productModal header button.close-btn {
+    background: transparent;
+    border: none;
+    color: #00d484;
+    font-size: 1.8rem;
+    cursor: pointer;
+    font-weight: 900;
+    transition: color 0.3s ease;
+  }
+  #productModal header button.close-btn:hover {
+    color: #019875;
+  }
+  #productModal main {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    padding: 20px 30px 40px;
+    color: #c0e6d5;
+  }
+  #productModal main .left {
+    flex: 1 1 320px;
+    max-width: 400px;
+  }
+  #productModal main .left img {
+    width: 100%;
+    border-radius: 12px;
+    object-fit: cover;
+    box-shadow: 0 0 20px #00b894aa;
+  }
+  #productModal main .right {
+    flex: 1 1 440px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  #productModal main .right p.description {
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+  #productModal main .right ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    color: #00d484;
+    font-weight: 700;
+  }
+  #productModal main .right ul li {
+    margin-bottom: 8px;
+  }
+  #productModal main .right .price-detail {
+    font-size: 1.3rem;
+    color: #00ffaa;
+    font-weight: 900;
+    margin-top: 10px;
+  }
+  #productModal main .right iframe {
+    border-radius: 12px;
+    width: 100%;
+    height: 240px;
+    border: none;
+    margin-top: 15px;
+    box-shadow: 0 0 20px #00b894cc;
+  }
+  #productModal main .right .btn-order {
+    margin-top: 25px;
+    background: #00b894;
+    border: none;
+    padding: 14px 36px;
+    border-radius: 40px;
+    color: #121212;
+    font-weight: 900;
+    font-size: 1.3rem;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    align-self: flex-start;
+  }
+  #productModal main .right .btn-order:hover {
+    background: #019875;
+  }
+  
+  /* Responsive modal */
+  @media (max-width: 850px) {
+    #productModal main {
+      flex-direction: column;
+      padding: 20px 20px 40px;
+    }
+    #productModal main .left,
+    #productModal main .right {
+      max-width: 100%;
+      flex: none;
+    }
+    #productModal main .right iframe {
+      height: 200px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>FiveM Craft</h1>
+  <div class="lang-select" id="langSelect">
+    <div class="lang-selected" id="selectedLang">
+      <img src="https://flagcdn.com/w20/fr.png" alt="FR" class="flag" />
+      <span>FR</span>
+    </div>
+    <div class="lang-list" id="langList">
+      <div data-lang="fr">
+        <img src="https://flagcdn.com/w20/fr.png" alt="FR" class="flag" />
+        Français
+      </div>
+      <div data-lang="en">
+        <img src="https://flagcdn.com/w20/gb.png" alt="EN" class="flag" />
+        English
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- PAGE ACCUEIL -->
+<section id="accueil">
+  <h1>FiveM Craft</h1>
+  <p data-i18n="home_desc">Mapping, Scripts & plus — Tout ce dont tu as besoin</p>
+  <button id="enterBoutiqueBtn" data-i18n="enter_btn">Entrer dans la boutique</button>
+</section>
+
+<!-- PAGE BOUTIQUE -->
+<section id="boutique">
+
+<nav>
+  <button class="category-btn active" data-category="all" data-i18n="cat_all">Tous</button>
+  <button class="category-btn" data-category="scripts" data-i18n="cat_scripts">Scripts</button>
+  <button class="category-btn" data-category="mapping" data-i18n="cat_mapping">Mapping</button>
+  <button class="category-btn" data-category="trenches" data-i18n="cat_trenches">Trenches of Chirac</button>
+  <button id="backAccueilBtn" data-i18n="back_home">Accueil</button>
+</nav>
+
+<main>
+  <div class="catalog" id="catalog"></div>
+</main>
+
+</section>
+
+<!-- MODALE DÉTAIL PRODUIT -->
+<div id="productModal" aria-hidden="true">
+  <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <header>
+      <h2 id="modalTitle"></h2>
+      <button class="close-btn" aria-label="Close modal">&times;</button>
+    </header>
+    <main>
+      <div class="left">
+        <img src="" alt="" id="modalImg" />
+      </div>
+      <div class="right">
+        <p class="description"></p>
+        <ul class="details-list"></ul>
+        <div class="price-detail"></div>
+        <iframe id="modalVideo" src="" allowfullscreen></iframe>
+        <button class="btn-order" data-i18n="order_btn">Commander</button>
+      </div>
+    </main>
+  </div>
+</div>
+
+<footer>
+  © 2025 FiveM Craft — Tous droits réservés
+</footer>
+
+<script>
+(() => {
+  // Traductions FR / EN
+  const translations = {
+    fr: {
+      home_desc: "Mapping, Scripts & plus — Tout ce dont tu as besoin",
+      enter_btn: "Entrer dans la boutique",
+      cat_all: "Tous",
+      cat_trenches: "Trenches of Chirac",
+      cat_mapping: "Mapping",
+      cat_scripts: "Scripts",
+      back_home: "Accueil",
+      order_btn: "Commander",
+      details_labels: {
+        release: "Date de sortie",
+        type: "Type",
+        framework: "Framework",
+        price: "Prix"
+      },
+    },
+    en: {
+      home_desc: "Mapping, Scripts & more — Everything you need",
+      enter_btn: "Enter the shop",
+      cat_all: "All",
+      cat_trenches: "Trenches of Chirac",
+      cat_mapping: "Mapping",
+      cat_scripts: "Scripts",
+      back_home: "Home",
+      order_btn: "Order now",
+      details_labels: {
+        release: "Release date",
+        type: "Type",
+        framework: "Framework",
+        price: "Price"
+      },
+    }
+  };
+
+  // Produits (exemple)
+  const products = [
+    {
+      id: 1,
+      category: "trenches",
+      name: { fr: "en développement", en: "in development" },
+      description: {
+        fr: "en développement",
+        en: "in development"
+      },
+      img: "https://media.istockphoto.com/id/1469238026/fr/vid%C3%A9o/4k-texte-n%C3%A9on-bleu-brillant-bient%C3%B4t-disponible.jpg?s=640x640&k=20&c=HWyBkBD4LShcRMHtKZRtMcgGIW3Rr5IwWFVR3m8Q254=",
+      video: "https://www.youtube.com/embed/wAevS2Q0Ywo",
+      release: "2024-07-20",
+      type: { fr: "Mod", en: "Mod" },
+      framework: "ESX / QBCore",
+      price: { fr: "0 €", en: "$0" }
+    },
+    {
+      id: 2,
+      category: "mapping",
+      name: { fr: "en développement", en: "in development" },
+      description: {
+        fr: "en développement",
+        en: "in development"
+      },
+      img: "https://media.istockphoto.com/id/1469238026/fr/vid%C3%A9o/4k-texte-n%C3%A9on-bleu-brillant-bient%C3%B4t-disponible.jpg?s=640x640&k=20&c=HWyBkBD4LShcRMHtKZRtMcgGIW3Rr5IwWFVR3m8Q254=",
+      video: "https://www.youtube.com/embed/7UOcRQD7Gp8",
+      release: "2023-11-15",
+      type: { fr: "Mapping", en: "Mapping" },
+      framework: "Standalone",
+      price: { fr: "0 €", en: "$0" }
+    },
+    {
+      id: 3,
+      category: "scripts",
+      name: { fr: "Garage QBCore avec synchronisation de l’essence et des dégâts", en: "QBCore Garage with Fuel & Damage Sync" },
+      description: {
+        fr: "Ce script de garage pour QBCore vous permet de gérer jusqu’à 10 zones de garage différentes. Il affiche en temps réel le pourcentage d’essence et l’état des dégâts de chaque véhicule. Grâce à une synchronisation efficace, les véhicules restent endommagés jusqu’à leur réparation réelle, évitant ainsi tout glitch. Compatible avec qb-menu, ce système est pensé pour offrir une expérience RP immersive et fluide.",
+        en: "This QBCore garage script allows you to manage up to 10 different garage zones. It displays real-time fuel percentage and vehicle damage status. Thanks to efficient synchronization, vehicles remain damaged until properly repaired, preventing glitches. Compatible with qb-menu, this system is designed to provide an immersive and smooth RP experience."
+      },
+      img: "https://i.ytimg.com/vi/vW0MWosqvrQ/maxresdefault.jpg",
+      video: "https://www.youtube.com/embed/2V1tfZ0uqN8",
+      release: "02/08/25",
+      type: { fr: "Script", en: "Script" },
+      framework: "QBCore",
+      price: { fr: "30 €", en: "$30" }
+    },
+    {
+     id: 4,
+      category: "scripts",
+      name: { fr: "en développement", en: "in development" },
+      description: {
+        fr: "en développement",
+        en: "in development"
+      },
+      img: "https://media.istockphoto.com/id/1469238026/fr/vid%C3%A9o/4k-texte-n%C3%A9on-bleu-brillant-bient%C3%B4t-disponible.jpg?s=640x640&k=20&c=HWyBkBD4LShcRMHtKZRtMcgGIW3Rr5IwWFVR3m8Q254=",
+      video: "https://www.youtube.com/embed/2V1tfZ0uqN8",
+      release: "02/08/25",
+      type: { fr: "Script", en: "Script" },
+      framework: "QBCore",
+      price: { fr: "0 €", en: "$0" }
+    },
+  ];
+
+  // Elements DOM
+  const accueil = document.getElementById('accueil');
+  const boutique = document.getElementById('boutique');
+  const catalog = document.getElementById('catalog');
+  const enterBtn = document.getElementById('enterBoutiqueBtn');
+  const backAccueilBtn = document.getElementById('backAccueilBtn');
+  const langSelect = document.getElementById('langSelect');
+  const selectedLang = document.getElementById('selectedLang');
+  const langList = document.getElementById('langList');
+  const productModal = document.getElementById('productModal');
+  const modalTitle = productModal.querySelector('header h2');
+  const modalImg = productModal.querySelector('#modalImg');
+  const modalDesc = productModal.querySelector('.description');
+  const modalDetailsList = productModal.querySelector('.details-list');
+  const modalPrice = productModal.querySelector('.price-detail');
+  const modalVideo = productModal.querySelector('#modalVideo');
+  const modalCloseBtn = productModal.querySelector('.close-btn');
+  const btnOrder = productModal.querySelector('.btn-order');
+
+  // State
+  let currentLang = 'fr';
+  let currentCategory = 'all';
+
+  // Traduire tout le contenu avec data-i18n
+  function translatePage() {
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      if (translations[currentLang][key]) {
+        el.textContent = translations[currentLang][key];
+      }
+    });
+  }
+
+  // Met à jour la langue sélectionnée dans le dropdown
+  function updateSelectedLang() {
+    const flagSrc = currentLang === 'fr' 
+      ? "https://flagcdn.com/w20/fr.png" 
+      : "https://flagcdn.com/w20/gb.png";
+    const text = currentLang.toUpperCase();
+    selectedLang.innerHTML = `<img src="${flagSrc}" alt="${text}" class="flag" /><span>${text}</span>`;
+  }
+
+  // Affiche les produits selon la catégorie
+  function showProducts() {
+    catalog.innerHTML = '';
+    const filtered = currentCategory === 'all' 
+      ? products 
+      : products.filter(p => p.category === currentCategory);
+    filtered.forEach(product => {
+      const item = document.createElement('div');
+      item.classList.add('item');
+      item.dataset.id = product.id;
+      item.innerHTML = `
+        <img src="${product.img}" alt="${product.name[currentLang]}" />
+        <h2>${product.name[currentLang]}</h2>
+        <p>${product.description[currentLang].substring(0, 80)}...</p>
+        <div class="price-tag">${product.price[currentLang]}</div>
+      `;
+      catalog.appendChild(item);
+    });
+  }
+
+  // Ouvre la modale avec les détails d'un produit
+  function openProductModal(product) {
+    modalTitle.textContent = product.name[currentLang];
+    modalImg.src = product.img;
+    modalImg.alt = product.name[currentLang];
+    modalDesc.textContent = product.description[currentLang];
+    modalDetailsList.innerHTML = `
+      <li><strong>${translations[currentLang].details_labels.release}:</strong> ${product.release}</li>
+      <li><strong>${translations[currentLang].details_labels.type}:</strong> ${product.type[currentLang]}</li>
+      <li><strong>${translations[currentLang].details_labels.framework}:</strong> ${product.framework}</li>
+    `;
+    modalPrice.textContent = `${translations[currentLang].details_labels.price}: ${product.price[currentLang]}`;
+    modalVideo.src = product.video;
+    btnOrder.textContent = translations[currentLang].order_btn;
+    productModal.classList.add('show');
+    productModal.setAttribute('aria-hidden', 'false');
+  }
+
+  // Fermer la modale
+  function closeModal() {
+    productModal.classList.remove('show');
+    productModal.setAttribute('aria-hidden', 'true');
+    modalVideo.src = '';
+  }
+
+  // Initialisation
+  function init() {
+    translatePage();
+    updateSelectedLang();
+    showProducts();
+  }
+
+  // Evenements
+  enterBtn.addEventListener('click', () => {
+    accueil.style.display = 'none';
+    boutique.style.display = 'flex';
+  });
+  backAccueilBtn.addEventListener('click', () => {
+    boutique.style.display = 'none';
+    accueil.style.display = 'flex';
+  });
+
+  // Changement de catégorie
+  document.querySelectorAll('.category-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if(btn.dataset.category === currentCategory) return;
+      currentCategory = btn.dataset.category;
+      document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      showProducts();
+    });
+  });
+
+  // Langue dropdown toggle
+  selectedLang.addEventListener('click', () => {
+    langList.classList.toggle('show');
+  });
+  // Choix langue
+  langList.querySelectorAll('div').forEach(div => {
+    div.addEventListener('click', () => {
+      const chosen = div.dataset.lang;
+      if (chosen !== currentLang) {
+        currentLang = chosen;
+        updateSelectedLang();
+        translatePage();
+        showProducts();
+        if (boutique.style.display === 'flex') {
+          // Si modale ouverte, mettre à jour aussi
+          if (productModal.classList.contains('show')) {
+            const prodId = Number(productModal.querySelector('.modal-content').dataset.prodId);
+            if(prodId){
+              const prod = products.find(p => p.id === prodId);
+              if(prod) openProductModal(prod);
+            }
+          }
+        }
+      }
+      langList.classList.remove('show');
+    });
+  });
+
+  // Clique sur un produit ouvre la modale
+  catalog.addEventListener('click', e => {
+    let target = e.target;
+    while(target && !target.classList.contains('item')){
+      target = target.parentElement;
+    }
+    if(target){
+      const prodId = Number(target.dataset.id);
+      const prod = products.find(p => p.id === prodId);
+      if(prod){
+        productModal.querySelector('.modal-content').dataset.prodId = prodId;
+        openProductModal(prod);
+      }
+    }
+  });
+
+  // Fermer modale
+  modalCloseBtn.addEventListener('click', closeModal);
+  productModal.addEventListener('click', e => {
+    if(e.target === productModal) closeModal();
+  });
+
+  init();
+})();
+</script>
+
+</body>
+</html>
